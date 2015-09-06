@@ -1,3 +1,12 @@
+{-|
+Module: AST
+Description: Datatypes and functions for modeling and evaluating an AST.
+Copyright: (c) Taran Lynn, 2015
+License: GPL-2
+
+This module contains datatypes and functions for modeling and evaluating a
+algebraic expression's abstract syntax tree.
+-}
 
 module AST where
 
@@ -15,12 +24,16 @@ data AST = Const Double
          | Neg AST
          deriving (Eq, Show)
 
+-- | Looks up a variable's value from its name.
 varLookup :: String -> Double
 varLookup "pi" = pi
 varLookup "e" = exp 1
 varLookup _ = 0
 
+-- | Looks up a function from its name.
 funcLookup :: String -> (Double -> Double)
+funcLookup "abs" = abs
+funcLookup "signum" = signum
 funcLookup "sqrt" = sqrt
 funcLookup "log" = log
 funcLookup "sin" = sin
@@ -29,8 +42,12 @@ funcLookup "tan" = tan
 funcLookup "asin" = asin
 funcLookup "acos" = acos
 funcLookup "atan" = atan
+funcLookup "round" = fromIntegral . round
+funcLookup "ceiling" = fromIntegral . ceiling
+funcLookup "floor" = fromIntegral . floor
 funcLookup _ = const 0
 
+-- | Evaluates an AST given the value for x.
 evalAST :: AST -> Double -> Double
 evalAST (Const c) _ = c
 evalAST (Var "x") x = x

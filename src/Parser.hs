@@ -1,3 +1,11 @@
+{-|
+Module: Parser
+Description: Parsers for algebraic expressions.
+Copyright: (c) Taran Lynn, 2015
+License: GPL-2
+
+This module contains functions parsing algebraic expressions.
+-}
 
 module Parser where
 
@@ -5,9 +13,11 @@ import Text.ParserCombinators.Parsec
 
 import AST
 
+-- | Parses a string into an AST for an algebraic expression.
 parseAST :: String -> Either ParseError AST
 parseAST str = parse formula "Formula" (stripWhitespace str)
 
+-- | Strips *all* whitespace from a string.
 stripWhitespace :: String -> String
 stripWhitespace [] = []
 stripWhitespace (' ':str) = stripWhitespace str

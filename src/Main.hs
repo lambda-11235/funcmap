@@ -1,3 +1,11 @@
+{-|
+Module: Main
+Description: The main module.
+Copyright: (c) Taran Lynn, 2015
+License: GPL-2
+
+Sets up the main window and starts execution.
+-}
 
 module Main where
 
@@ -52,6 +60,7 @@ main = do initGUI
           widgetShowAll window
           mainGUI
 
+-- | Updates the graph, or clears it if an error occurs.
 updateGraph :: Entry -> Entry -> Entry -> Entry -> DrawingArea -> IO ()
 updateGraph formula xmin xmax xstep da = do
   formula' <- entryGetText formula
@@ -69,6 +78,7 @@ updateGraph formula xmin xmax xstep da = do
       updateGraph' _ _ _ _ = do dw <- widgetGetDrawWindow da
                                 drawWindowClear dw
 
+-- | Tries to read a string.
 maybeRead :: Read a => String -> Maybe a
 maybeRead str = case reads str of
                  [(x, "")] -> Just x
