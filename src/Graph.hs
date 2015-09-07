@@ -10,7 +10,7 @@ number lines.
 
 module Graph where
 
-import Graphics.UI.Gtk
+import Graphics.UI.Gtk hiding (rectangle)
 import Graphics.Rendering.Cairo
 import Graphics.Rendering.Cairo.Matrix (Matrix (Matrix))
 
@@ -26,9 +26,20 @@ graph da ps xrange = do dw <- widgetGetDrawWindow da
 
 -- | Renders a graph.
 renderGraph :: [(Double, Double)] -> (Double, Double) -> (Int, Int) -> Render ()
-renderGraph ps xrange size = do drawNumLines size
+renderGraph ps xrange size = do drawBackground size
+                                drawNumLines size
                                 drawNumbers xrange size
                                 drawLines' ps xrange size
+
+-- | Draws a plain white background.
+drawBackground :: (Int, Int) -> Render ()
+drawBackground (w, h) = let w' = fromIntegral w
+                            h' = fromIntegral h
+                        in
+                         do setSourceRGB 1 1 1
+                            rectangle 0 0 w' h'
+                            fill
+                            setSourceRGB 0 0 0
 
 -- | Draws the lines for the number lines.
 drawNumLines :: (Int, Int) -> Render ()
