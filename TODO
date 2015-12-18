@@ -2,4 +2,3 @@ TODO
 ====
 
 * Parser uses the try function a lot, which can slow it down.
-* Start using Reactive Banana.

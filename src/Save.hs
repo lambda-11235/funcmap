@@ -66,9 +66,9 @@ getSaveFile = do fcd <- (fileChooserDialogNew (Just "Save As") Nothing
 
 -- | Does the actual writing to the file using cairo.
 cairoSave file ps xrange = do
- let w = 800
-     h = 600
-     graph = renderGraph ps xrange (w, h)
- surf <- createImageSurface FormatARGB32 w h
- renderWith surf graph
- surfaceWriteToPNG surf file
+  let w = 800
+      h = 600
+      graph = renderGraph ps xrange (w, h)
+  surf <- createImageSurface FormatARGB32 w h
+  renderWith surf graph
+  surfaceWriteToPNG surf file
