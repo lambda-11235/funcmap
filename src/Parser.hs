@@ -27,43 +27,47 @@ stripWhitespace ('\r':str) = stripWhitespace str
 stripWhitespace (c:str) = c : stripWhitespace str
 
 formula :: Parser AST
-formula = try add <|> try subtract' <|> factor
+formula = do x <- factor
+             op <- optionMaybe (add <|> subtract')
+             case op of
+              Just (Left y) -> return $ Add x y
+              Just (Right y) -> return $ Sub x y
+              Nothing -> return $ x
 
-add :: Parser AST
-add = do fop <- factor
-         char '+'
-         sop <- formula
-         return $ Add fop sop
+add :: Parser (Either AST AST)
+add = do char '+'
+         x <- formula
+         return $ Left x
 
-subtract' :: Parser AST
-subtract' = do fop <- factor
-               char '-'
-               sop <- formula
-               return $ Sub fop sop
+subtract' :: Parser (Either AST AST)
+subtract' = do char '-'
+               x <- formula
+               return $ Right x
 
 factor :: Parser AST
-factor = try multiply <|> try divide <|> pterm
+factor = do x <- pterm
+            op <- optionMaybe (multiply <|> divide)
+            case op of
+             Just (Left y) -> return $ Mult x y
+             Just (Right y) -> return $ Div x y
+             Nothing -> return $ x
 
-multiply :: Parser AST
-multiply = do fop <- term
-              char '*'
-              sop <- factor
-              return $ Mult fop sop
+multiply :: Parser (Either AST AST)
+multiply = do char '*'
+              x <- factor
+              return $ Left x
 
-divide :: Parser AST
-divide = do fop <- pterm
-            char '/'
-            sop <- factor
-            return $ Div fop sop
+divide :: Parser (Either AST AST)
+divide = do char '/'
+            x <- factor
+            return $ Right x
 
 pterm :: Parser AST
-pterm = try power <|> term
-
-power :: Parser AST
-power = do fop <- term
-           char '^'
-           sop <- pterm
-           return $ Pow fop sop
+pterm = do x <- term
+           op <- optionMaybe (char '^' >> pterm)
+           case op of
+            Just y -> return $ Pow x y
+            Nothing -> return $ x
 
 term :: Parser AST
 term = try function <|> variable <|> constant <|> group

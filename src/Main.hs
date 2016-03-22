@@ -96,14 +96,13 @@ setupNetwork exposeHandler saveHandler entryHandler da = do
   eEntry <- fromAddHandler entryHandler
 
   let bExpose = stepper () eExpose
-      bSave = stepper () eSave
       bEntry = stepper initGraphVals eEntry
       bUpdate = bExpose *> bEntry
+      eSave' = bEntry <@ eSave
 
-  eSave' <- changes (bSave *> bEntry)
   eUpdate <- changes bUpdate
   reactimate $ (\(a, b, c, d) -> savePNG a b c d) <$> eSave'
-  reactimate $ (\(a, b, c, d) -> updateGraph a b c d da) <$> eUpdate
+  reactimate' $ (fmap (\(a, b, c, d) -> updateGraph a b c d da)) <$> eUpdate
 
 
 -- | Updates the graph, or clears it if an error occurs.
