@@ -84,20 +84,20 @@ main = do initGUI
           widgetShowAll window
           mainGUI
 
-setupNetwork :: (Frameworks t)
-                => AddHandler ()
+setupNetwork :: AddHandler ()
                 -> AddHandler ()
                 -> AddHandler (String, String, String, String)
                 -> DrawingArea
-                -> Moment t ()
+                -> MomentIO ()
 setupNetwork exposeHandler saveHandler entryHandler da = do
   eExpose <- fromAddHandler exposeHandler
   eSave <- fromAddHandler saveHandler
   eEntry <- fromAddHandler entryHandler
 
-  let bExpose = stepper () eExpose
-      bEntry = stepper initGraphVals eEntry
-      bUpdate = bExpose *> bEntry
+  bExpose <- stepper () eExpose
+  bEntry <- stepper initGraphVals eEntry
+
+  let bUpdate = bExpose *> bEntry
       eSave' = bEntry <@ eSave
 
   eUpdate <- changes bUpdate
